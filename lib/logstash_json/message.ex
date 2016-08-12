@@ -9,7 +9,7 @@ defmodule LogstashJson.Message do
     %{
       "@timestamp": LogstashJson.Timestamp.timestamp(ts),
       level: level,
-      message: msg,
+      message: to_string(msg),
       metadata: metadata,
       module: md[:module],
       function: md[:function],
