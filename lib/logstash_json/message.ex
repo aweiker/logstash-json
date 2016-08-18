@@ -10,11 +10,20 @@ defmodule LogstashJson.Message do
       "@timestamp": LogstashJson.Timestamp.timestamp(ts),
       level: level,
       message: to_string(msg),
-      metadata: metadata,
+      metadata: take_metadata(md, metadata),
       module: md[:module],
       function: md[:function],
       line: md[:line]
     } |> Map.merge(fields)
+  end
+  
+  defp take_metadata(metadata, keys) do
+    Enum.reduce keys, %{}, fn key, acc ->
+      case Keyword.fetch(metadata, key) do
+        {:ok, val} -> Map.merge(acc, %{key => val})
+        :error     -> acc
+      end
+    end
   end
 
   defp print_pids(it) when is_map(it), do: Enum.into it, %{}, fn {k, v} -> {k, print_pids(v)} end
